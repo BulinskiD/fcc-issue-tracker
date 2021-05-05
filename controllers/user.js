@@ -27,7 +27,11 @@ router.post("/:_id/exercises", async (req, res, next) => {
   const id = req.params._id;
   try {
     const user = await User.findById(id);
-    user.exercises.push(req.body);
+    const exercise = {
+      ...req.body,
+      date: req.body.date ? new Date(req.body.date) : new Date(),
+    };
+    user.exercises.push(exercise);
     await user.save();
     return res.json(user);
   } catch (error) {
