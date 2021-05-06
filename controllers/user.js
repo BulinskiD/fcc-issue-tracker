@@ -1,5 +1,5 @@
 const { User } = require("../models/User");
-const { differenceInMilliseconds } = require("date-fns");
+const { differenceInMilliseconds, isValid } = require("date-fns");
 const express = require("express");
 
 const router = express.Router();
@@ -54,9 +54,15 @@ router.get("/:_id/logs", async (req, res, next) => {
     const logs = user.exercises
       .filter(
         ({ date }) =>
-          (differenceInMilliseconds(date, fromDate) > 0) &
-          (differenceInMilliseconds(date, toDate) < 0)
+          (!isValid(fromDate) ||
+            differenceInMilliseconds(date, fromDate) > 0) &&
+          (!isValid(toDate) || differenceInMilliseconds(date, toDate) < 0)
       )
+      .map((log) => ({
+        description: log.description,
+        duration: log.duration,
+        date: log.date.toDateString(),
+      }))
       .slice(0, limit);
     return res.json({
       _id: user._id,
