@@ -47,10 +47,12 @@ router.post("/:_id/exercises", async (req, res, next) => {
 
 router.get("/:_id/logs", async (req, res, next) => {
   const { from, to, limit } = req.query;
+  const fromDate = new Date(from);
+  const toDate = new Date(to);
   try {
     const user = await User.findById(req.params._id);
     const log = user.exercises
-      .filter(isDateBetween({ from, to }))
+      .filter(isDateBetween({ fromDate, toDate }))
       .map(({ description, date, duration }) => ({
         description,
         duration,
