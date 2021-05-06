@@ -14,7 +14,7 @@ router.get("/", async (req, res, next) => {
 });
 
 router.post("/", async (req, res, next) => {
-  const user = new User({ ...req.body, exercises: [] });
+  const user = new User(req.body);
   try {
     await user.save();
     return res.status(201).json(user);
@@ -33,7 +33,7 @@ router.post("/:_id/exercises", async (req, res, next) => {
     };
     user.exercises.push(exercise);
     await user.save();
-    return res.json(user);
+    return res.json({ _id: user._id, username: user.username, ...exercise });
   } catch (error) {
     next(error);
   }
