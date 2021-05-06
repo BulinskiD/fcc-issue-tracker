@@ -1,5 +1,5 @@
 const { User } = require("../models/User");
-const { isDateBetween } = require("../utils/isDateBetween");
+const { isValid, differenceInMilliseconds } = require("date-fns");
 const express = require("express");
 
 const router = express.Router();
@@ -52,7 +52,12 @@ router.get("/:_id/logs", async (req, res, next) => {
   try {
     const user = await User.findById(req.params._id);
     const log = user.exercises
-      .filter(isDateBetween({ fromDate, toDate }))
+      .filter(
+        (date) =>
+          (!isValid(fromDate) ||
+            differenceInMilliseconds(date, fromDate) > 0) &&
+          (!isValid(toDate) || differenceInMilliseconds(date, toDate) < 0)
+      )
       .map(({ description, date, duration }) => ({
         description,
         duration,
