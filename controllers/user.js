@@ -33,7 +33,13 @@ router.post("/:_id/exercises", async (req, res, next) => {
     };
     user.exercises.push(exercise);
     await user.save();
-    return res.json({ _id: user._id, username: user.username, ...exercise });
+    return res.json({
+      _id: user._id,
+      username: user.username,
+      duration: Number(exercise.duration),
+      date: exercise.date.toDateString(),
+      description: exercise.description,
+    });
   } catch (error) {
     next(error);
   }
